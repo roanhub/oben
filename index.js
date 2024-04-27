@@ -277,6 +277,22 @@ try {
 
           const media = new MessageMedia("application/pdf", base64);
           await msg.reply(media);
+        } else if (msg.body.startsWith("!todos")) {
+          if (chat.isGroup) {
+            const texto = msg.body.replace("!todos", "").trim();
+            const participants = await chat.participants;
+            const participantsArray = await participants.map(
+              (p) => p.id._serialized
+            );
+
+            console.log(participantsArray);
+            await msg.delete(true);
+            await chat.sendMessage(texto, {
+              mentions: participantsArray,
+            });
+          } else {
+            await msg.reply("Este comando solo se puede usar en grupos!");
+          }
         }
       } catch (error) {
         console.log(error);
